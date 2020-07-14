@@ -27,8 +27,8 @@ class User(db.Model):
     username = db.Column(db.String(50), index=True)
     password_hash = db.Column(db.String(80))
     admin = db.Column(db.Boolean)
-    created_on = db.Column(db.DateTime(), default=datetime.now)
-    updated_on = db.Column(db.DateTime(), default=datetime.now, onupdate=datetime.now)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def hash_password(self, password):
         self.password_hash = generate_password_hash(password, method='sha256')
@@ -58,8 +58,8 @@ class Task(db.Model):
     description = db.Column(db.Text)
     done = db.Column(db.Boolean)
     user_id = db.Column(db.Integer)
-    created_on = db.Column(db.DateTime(), default=datetime.now)
-    updated_on = db.Column(db.DateTime(), default=datetime.now, onupdate=datetime.now)
+    created_on = db.Column(db.DateTime(), default=datetime.utcnow)
+    updated_on = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
 
 def build_task_data(task, ext=True):
     task_data = {}
