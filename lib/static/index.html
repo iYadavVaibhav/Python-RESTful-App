@@ -153,7 +153,7 @@
             self.loginURI = 'http://127.0.0.1:5000/login';
             self.username = "";
             self.password = "";
-            self.token = "token";
+            self.token = "trash";
             self.tasks = ko.observableArray();
 
             // Wrapper to jQuery ajax function
@@ -167,7 +167,7 @@
                     dataType: 'json',
                     data: JSON.stringify(data),
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader("x-access-token", window.localStorage.getItem(self.token));
+                        xhr.setRequestHeader("x-access-token", JSON.parse(window.localStorage.getItem(self.token)).coin);
                     },
                     error: function (jqXHR) {
                         console.log("ajax error " + jqXHR.status);
@@ -204,7 +204,7 @@
                         title: ko.observable(data.task.title),
                         description: ko.observable(data.task.description),
                         done: ko.observable(data.task.done),
-                        updated_on: ko.observable(moment(data.tasks[i].updated_on).local().fromNow())
+                        updated_on: ko.observable(moment(data.task.updated_on).local().fromNow())
                     });
                 }).fail(function (jqXHR) {
                     if (jqXHR.status == 403)
@@ -280,7 +280,12 @@
                 $.ajax(request).done(function (data) {
                     //console.log(data);
                     //self.token = data.token;
-                    window.localStorage.setItem(self.token, data.token);
+                    const now = new Date()
+                    const value = {
+                        coin : data.token,
+                        expiry : now.getTime() + data.duration*1000,
+                    }
+                    window.localStorage.setItem(self.token, JSON.stringify(value) );
                     //console.log(window.localStorage.getItem(self.token));
                     self.getAll();
                 }).fail(function (jqXHR) {
@@ -288,7 +293,19 @@
                         setTimeout(self.beginLogin, 500);
                 });
             }
-            if (window.localStorage.getItem(self.token)) self.getAll();
+            self.isLoggedIn = function() {
+                const now = new Date();
+                jwt = JSON.parse(window.localStorage.getItem(self.token));
+                console.log(jwt);
+                console.log(now.getTime());
+                if ( jwt != null && jwt.expiry > now.getTime() ) {
+                    return true
+                }
+                localStorage.removeItem(self.token);
+                return false;
+            }
+            console.log(self.isLoggedIn());
+            if (self.isLoggedIn()) self.getAll();
             else self.beginLogin();
         }
         function AddTaskViewModel() {
