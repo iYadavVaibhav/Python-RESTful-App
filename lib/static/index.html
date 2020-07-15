@@ -170,14 +170,14 @@
                         xhr.setRequestHeader("x-access-token", JSON.parse(window.localStorage.getItem(self.token)).coin);
                     },
                     error: function (jqXHR) {
-                        console.log("ajax error " + jqXHR.status);
+                        //console.log("ajax error " + jqXHR.status);
                     }
                 };
                 return $.ajax(request);
             }
             self.getAll = function () {
                 self.requestApi(self.tasksURI, 'GET').done(function (data) {
-                    console.log(data)
+                    //console.log(data)
                     for (var i = 0; i < data.tasks.length; i++) {
                         self.tasks.push({
                             uri: ko.observable(data.tasks[i].uri),
@@ -198,7 +198,7 @@
             }
             self.add = function (task) {
                 self.requestApi(self.tasksURI, 'POST', task).done(function (data) {
-                    console.log(data)
+                    //console.log(data)
                     self.tasks.push({
                         uri: ko.observable(data.task.uri),
                         title: ko.observable(data.task.title),
@@ -274,7 +274,7 @@
                             "Basic " + btoa(username + ":" + password));
                     },
                     error: function (jqXHR) {
-                        console.log("ajax error " + jqXHR.status);
+                        //console.log("ajax error " + jqXHR.status);
                     }
                 };
                 $.ajax(request).done(function (data) {
@@ -296,15 +296,15 @@
             self.isLoggedIn = function() {
                 const now = new Date();
                 jwt = JSON.parse(window.localStorage.getItem(self.token));
-                console.log(jwt);
-                console.log(now.getTime());
+                //console.log(jwt);
+                //console.log(now.getTime());
                 if ( jwt != null && jwt.expiry > now.getTime() ) {
                     return true
                 }
                 localStorage.removeItem(self.token);
                 return false;
             }
-            console.log(self.isLoggedIn());
+            //console.log(self.isLoggedIn());
             if (self.isLoggedIn()) self.getAll();
             else self.beginLogin();
         }
